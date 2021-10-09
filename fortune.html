@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>fortune</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <table style="border: 1px solid black;">
+            <tr>
+                <td><input type="text" v-model="maleYear" placeholder="男">年</td>
+                <td>{{maleYearName}}</td>
+                <td><input type="text" v-model="femaleYear" placeholder="女">年</td>
+                <td>{{femaleYearName}}</td>
+            </tr>
+            <tr>
+                <td>
+                    <span :style="[maleFortuneStyle]">{{maleFortuneName}}</span>
+                </td>
+                <td>{{maleAnimal}}</td>
+                <td><span :style="[femaleFortuneStyle]">{{femaleFortuneName}}</span></td>
+                <td>{{femaleAnimal}}</td>
+            </tr>
+        </table>
+        <br>
+
+        <span :style="[queryResultStyle]">{{queryResult}}</span>
+    </div>
+    <script>
+        var app = new Vue({
+            el: "#app",
+            data: {
+                maleYear: 1978,
+                femaleYear: 1978,
+
+            },
+            methods: {
+                getFortune: (year) => {
+                    if (year < 1924) {
+                        return "数值非法！"
+                    }
+                    var fortuneNames = [
+                        '海中金', '炉中火', '大林木', '路旁土',
+                        '剑锋金', '山头火', '涧下水', '城头土',
+                        '白蜡金', '杨柳木', '井泉水', '屋上土',
+                        '霹雷火', '松柏木', '长流水', '沙中金',
+                        '山下火', '船底木', '壁上土', '金箔金',
+                        '佛灯火', '天河水', '大驿土', '钗钏金',
+                        '桑柘木', '大溪水', '沙中土', '太阳火',
+                        '石榴木', '大海水'
+                    ];
+                    var fortuneId = [
+                        /**
+                         * '海中金', '炉中火', '大林木', '路旁土',
+                        '剑锋金', '山头火', '涧下水', '城头土',
+                        '白蜡金', '杨柳木', '井泉水', '屋上土',
+                        '霹雷火', '松柏木', '长流水', '沙中金',
+                        '山下火', '船底木', '壁上土', '金箔金',
+                        '佛灯火', '天河水', '大驿土', '钗钏金',
+                        '桑柘木', '大溪水', '沙中土', '太阳火',
+                        '石榴木', '大海水'
+                         */
+                        0, 3, 1, 4, 0, 3, 2, 4, 0, 1, 2, 4, 3, 1, 2, 0, 3, 1, 4, 0, 3, 2, 4, 0, 1, 2, 4,
+                        3, 1, 2,
+                    ]
+                    return { fortuneName: fortuneNames[Math.floor((year - 1924) / 2) % 30], fortuneId: fortuneId[Math.floor((year - 1924) / 2) % 30] };
+                },
+                getYearName: (year) => {
+                    if (year < 1924) {
+                        return "数值非法！"
+                    }
+                    var t = (year - 4) % 60 % 10;
+                    var d = (year - 4) % 60 % 12;
+
+                    var T = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"];
+                    var D = ["子鼠", "丑牛", "寅虎", "卯兔", "辰龙", "巳蛇",
+                        "午马", "未羊", "申猴", "酉鸡", "戌狗", "亥猪"
+                    ];
+
+                    var r = T[t] + D[d][0];
+                    return r;
+                },
+                getAnimal: (year) => {
+                    if (year < 1924) {
+                        return "数值非法！"
+                    }
+                    var d = (year - 4) % 60 % 12;
+                    var c = Math.floor(year % 10 / 2);
+                    var D = ["子鼠", "丑牛", "寅虎", "卯兔", "辰龙", "巳蛇",
+                        "午马", "未羊", "申猴", "酉鸡", "戌狗", "亥猪"
+                    ];
+                    var C = ['白', '黑', '青', '红', '黄'];
+                    return C[c] + D[d][1];
+                }
+            },
+            computed: {
+                maleYearName: function () {
+                    return this.$options.methods.getYearName(this.maleYear);
+                },
+                femaleYearName: function () {
+                    return this.$options.methods.getYearName(this.femaleYear);
+                },
+                maleFortuneName: function () {
+                    return this.$options.methods.getFortune(this.maleYear).fortuneName;
+                },
+                maleAnimal: function () {
+                    return this.$options.methods.getAnimal(this.maleYear);
+                },
+                femaleFortuneName: function () {
+                    return this.$options.methods.getFortune(this.femaleYear).fortuneName;
+                },
+                femaleAnimal: function () {
+                    return this.$options.methods.getAnimal(this.femaleYear);
+                },
+                maleFortuneStyle: function () {
+                    return { color: ["gold", "green", "aqua", "red", "brown"][this.$options.methods.getFortune(this.maleYear).fortuneId] }
+                },
+                femaleFortuneStyle: function () {
+                    return { color: ["gold", "green", "aqua", "red", "brown"][this.$options.methods.getFortune(this.femaleYear).fortuneId] }
+                },
+                queryResult: function () {
+                    var a = this.$options.methods.getFortune(this.maleYear).fortuneId;
+                    var b = this.$options.methods.getFortune(this.femaleYear).fortuneId;
+                    var res = [
+                        [
+                            '男金女金好处多，夫妻恩爱笑呵呵，儿女随心又满意，晚年康乐福寿多。',
+                            '男金女木合得来，两人和好笑颜开，如果双双再一起，五男两女有高颜。',
+                            '男金女水老高强，夫妻相合寿命长，五男两女金满堂，手中有钱又有粮。',
+                            '男金女火不相当，半路相克离故乡，两人相吵不安康，互相原谅呈吉祥。',
+                            '男金女土多美好，荣华富贵白偕老，一生幸福多欢乐，一对夫妻白头老。',
+                        ],
+                        [
+                            '男木女金不相配，半路争吵去他乡，结合一处不安康，子女稀少不相当。',
+                            '男木女木不相当，两木相比不一样，越是夫妻随心愿，自然相克受损伤。',
+                            '男木女水同合愿，一对双双如水鱼，男女相合且安康，金银财宝是钱粮。',
+                            '男木女火能成双，木火相遇能运旺，儿女双全好风光，夫妻和睦好逍遥。',
+                            '男木女土不和心，牛马相合不安份，出外交友费口舌，夫妻之间不安分。'
+                        ],
+                        [
+                            '男水女金好夫妻，双双荣华共一处，男女穿金多高贤，皆把福德传儿孙。',
+                            '男水女木多相好，才华玉地自然来，同床金发相和好，田园牛马满仓宅。',
+                            '男水女水共平衡，两人欢乐再一起，各水溪流呈最底，呈不吉利但守财。',
+                            '男水女火不成双，水火相遇似虎狼，男水女火更不成，有似钱财多损伤。',
+                            '男水女土不相配，夫妻言语争高强，生儿育女多辛苦，相互原谅呈吉祥。'
+                        ],
+                        [
+                            '男火女金两不详，犹如针尖对麦芒，男女到老五依靠，离分悲惨悔断肠。',
+                            '男火女木似可成，相互原谅福终生，有了贵子贵孙旺，福禄鸳鸯得安宁。',
+                            '男火女水相当好，两戏两鱼两鸳鸯，财粮好衣多多进，儿女双全好风光。',
+                            '男火女火两不详，两火之间有高强，人人都说相当好，到头总是不安宁。',
+                            '男火女土是守财，福禄鸳鸯送颜开，夫妻同床仁帷帐，总是青梅竹马婿。'
+                        ],
+                        [
+                            '男土女金合得来，男女和好笑颜开，五男两女富贵财，前生配得好成双。',
+                            '男土女木似不昌，夫妻相克不安当，全家不安儿女少，财来财去不安康。',
+                            '男土女水难成行，牛马相逢不相当，口舌常见多吵闹，影响家中儿女郎。',
+                            '男土女火发大财，金银财宝满仓宅，举开贵子贤孙旺，福禄双全保客颜。',
+                            '男土女土好夫妻，夫妻和好与齐全，男女穿金有代玉，百年夫妻不分离。'
+                        ]
+                    ];
+
+                    return res[a - 1][b - 1];
+                },
+                queryResultStyle: function () {
+                    var a = this.$options.methods.getFortune(this.maleYear).fortuneId;
+                    var b = this.$options.methods.getFortune(this.femaleYear).fortuneId;
+                    return {
+                        color: [[1, 1, 1, 0, 1], [0, 0, 1, 1, 0], [1, 1, 1, 0, 0], [0, 1, 1, 0, 1], [1, 0, 0, 1, 1]][a - 1][b - 1] == 1 ? "red" : "blue"
+                    }
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
